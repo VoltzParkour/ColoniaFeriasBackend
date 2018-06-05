@@ -92,7 +92,8 @@ class Controller extends BaseController
 		    //Get the crendentials and register the boleto payment
 		    $result = $boleto->register(
 		        \PagSeguro\Configuration\Configure::getAccountCredentials()
-		    );
+			);
+			$transactionCode = $result->getCode();
 		    // You can use methods like getCode() to get the transaction code and getPaymentLink() for the Payment's URL.
 		    // echo "<pre>";
 		    // print_r($result);
@@ -184,7 +185,8 @@ class Controller extends BaseController
 		    //Get the crendentials and register the boleto payment
 		    $result = $creditCard->register(
 		        \PagSeguro\Configuration\Configure::getAccountCredentials()
-		    );
+			);
+			$transactionCode = $result->getCode();			
 		    echo "<pre>";
 		    print_r($result);
 		    return 0;
