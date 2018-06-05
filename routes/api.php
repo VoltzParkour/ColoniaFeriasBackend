@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 Route::get('/session', 'Controller@Session');
 Route::post('/payment/boleto', 'Controller@BoletoPayment');
 Route::post('/payment/card', 'Controller@CardPayment');
-Route::post('/payment/transactionCode', 'Controller@transactionCode')
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
