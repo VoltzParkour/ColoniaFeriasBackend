@@ -14,17 +14,14 @@ use GuzzleHttp\Client;
 
 class Controller extends BaseController
 {
-    $email = 'luisfnicolau@hotmail.com';
-    $token = 'F446F9F561EA4410BF9FF2843967E25E';
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     public function Session(Request $request) {
     	$client = new Client([
    	 // Base URI is used with relative requests
-    		// 'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
-        'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/',
+    		'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
 		]);
-		$response = $client->request('POST', 'sessions?email='.$this->email.'&token='.$this->token);
+		$response = $client->request('POST', 'sessions?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
 		$xml = simplexml_load_string($response->getBody());
 		$json = json_encode($xml);
     	return json_decode($json,TRUE);
@@ -45,9 +42,8 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
-    \PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials($this->email, $this->token);
+		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
@@ -56,7 +52,7 @@ class Controller extends BaseController
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$boleto->setReceiverEmail($this->email);
+		$boleto->setReceiverEmail('luisfnicolau@hotmail.com');
 		// Set the currency
 		$boleto->setCurrency("BRL");
 		// Add an item for this payment request
@@ -119,16 +115,15 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
-    \PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials($this->email, $this->token);
+		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$creditCard->setReceiverEmail($this->email);
+		$creditCard->setReceiverEmail('luisfnicolau@hotmail.com');
 		// Set a reference code for this payment request. It is useful to identify this payment
 		// in future notifications.
 		$creditCard->setReference("LIBPHP000001");
@@ -225,10 +220,9 @@ class Controller extends BaseController
 
     $client = new Client([
      // Base URI is used with relative requests
-        // 'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
-        'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
+        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->transactionCode.'?email='.$this->email.'&token='.$this->token);
+    $response = $client->request('GET', 'transactions/notifications/'.$request->transactionCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
     $transactionCode = $transaction->code;
@@ -236,8 +230,8 @@ class Controller extends BaseController
     switch ($transactionStatus) {
       case 3:
         $reference = $database
-          ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          // ->getReference('colony_buyers_by_payment/'.'A5924752-CB8-462F-BF56-9403BA7C067A');
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.'A5924752-CB8-462F-BF56-9403BA7C067A');
 
         $snapshot = $reference->getSnapshot();
           // ->push([
