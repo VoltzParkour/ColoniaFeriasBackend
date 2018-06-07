@@ -220,7 +220,7 @@ class Controller extends BaseController
 
     $client = new Client([
      // Base URI is used with relative requests
-        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
+        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
     ]);
     $response = $client->request('GET', 'transactions/notifications/'.$request->transactionCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
     // return $response->getBody();
@@ -231,13 +231,13 @@ class Controller extends BaseController
       case 3:
         $reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('colony_buyers_by_payment/'.'A5924752-CB8-462F-BF56-9403BA7C067A');
-
-        $snapshot = $reference->getSnapshot();
+          ->getReference('colony_buyers_by_payment/'.$transactionCode);
+        // $snapshot = $reference->getSnapshot();
           // ->push([
           //     'title' => 'Post title',
           //     'body' => 'This should probably be longer.'
           // ]);
+          // return $reference->getValue();
           if (!$reference->getValue()) {
             return response('Not found', 201);
           }
