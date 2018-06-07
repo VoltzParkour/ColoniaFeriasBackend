@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -40,9 +42,9 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("sandbox"); 
-		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1"); 
-		\PagSeguro\Configuration\Configure::setCharset('UTF-8'); 
+		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
+		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
 		// Set the Payment Mode for this payment request
@@ -50,7 +52,7 @@ class Controller extends BaseController
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$boleto->setReceiverEmail('luisfnicolau@hotmail.com'); 
+		$boleto->setReceiverEmail('luisfnicolau@hotmail.com');
 		// Set the currency
 		$boleto->setCurrency("BRL");
 		// Add an item for this payment request
@@ -72,7 +74,7 @@ class Controller extends BaseController
 		$boleto->setSender()->setName($request->get('name'));
 		// $boleto->setSender()->setName('abigail freitas');
 		// $boleto->setSender()->setEmail($request->get('email'));
-		$boleto->setSender()->setEmail('fsdsdas@sandbox.pagseguro.com.br');
+		$boleto->setSender()->setEmail('c45698485807864775067@sandbox.pagseguro.com.br');
 		$boleto->setSender()->setPhone()->withParameters(
 		    $request->get('phone_code'),
 		    $request->get('phone')
@@ -97,7 +99,11 @@ class Controller extends BaseController
 		    // You can use methods like getCode() to get the transaction code and getPaymentLink() for the Payment's URL.
 		    // echo "<pre>";
 		    // print_r($result);
-		    return [$result->getCode(), $result->getPaymentLink()];
+    $data = [
+      'transactionCode' => $result->getCode(),
+      'paymentLink' => $result->getPaymentLink()
+    ];
+    return response()->json($data);
 		} catch (Exception $e) {
 		    echo "</br> <strong>";
 		    die($e->getMessage());
@@ -109,9 +115,9 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("sandbox"); 
-		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1"); 
-		\PagSeguro\Configuration\Configure::setCharset('UTF-8'); 
+		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
+		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
 		/**
@@ -185,14 +191,74 @@ class Controller extends BaseController
 		    //Get the crendentials and register the boleto payment
 		    $result = $creditCard->register(
 		        \PagSeguro\Configuration\Configure::getAccountCredentials()
-			);			
+			);
 		    echo "<pre>";
 		    print_r($result);
-		    return $result->getCode();
+        $data = [
+          'transactionCode' => $result->getCode(),
+        ];
+		    return $data;
 		} catch (Exception $e) {
 		    echo "</br> <strong>";
 		    die($e->getMessage());
 		}
 	}
+
+  public function Confirmation(Request $request) {
+
+    $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/coloniaferiasvoltz-firebase-adminsdk-qgbr2-a62e750848.json');
+
+    $firebase = (new Factory)
+        ->withServiceAccount($serviceAccount)
+        // The following line is optional if the project id in your credentials file
+        // is identical to the subdomain of your Firebase project. If you need it,
+        // make sure to replace the URL with the URL of your project.
+        ->withDatabaseUri('https://coloniaferiasvoltz.firebaseio.com')
+        ->create();
+
+    $database = $firebase->getDatabase();
+
+    $client = new Client([
+     // Base URI is used with relative requests
+        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
+    ]);
+    $response = $client->request('GET', 'transactions/notifications/'.$request->transactionCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
+    // return $response->getBody();
+    $transaction = simplexml_load_string($response->getBody());
+    $transactionCode = $transaction->code;
+    $transactionStatus = $transaction->status;
+    switch ($transactionStatus) {
+      case 3:
+        $reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.'A5924752-CB8-462F-BF56-9403BA7C067A');
+
+        $snapshot = $reference->getSnapshot();
+          // ->push([
+          //     'title' => 'Post title',
+          //     'body' => 'This should probably be longer.'
+          // ]);
+          if (!$reference->getValue()) {
+            return response('Not found', 201);
+          }
+          $coloniesIds = array_keys($reference->getValue());
+          for ($i=0; $i < sizeof($coloniesIds); $i++) {
+              $user = $reference->getChild($coloniesIds[$i]);
+              $userIds = array_keys($user->getValue());
+              for ($j=0; $j < sizeof($userIds); $j++) {
+                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
+                // return $user->getChild($userIds[$j])->getValue();
+                ->set($user->getChild($userIds[$j])->getValue());
+              }
+          }
+          $reference->remove();
+          return response('Added', 200);
+        break;
+
+      default:
+      return response('Not a payment confirmation', 201);
+        break;
+    }
+  }
 
 }
