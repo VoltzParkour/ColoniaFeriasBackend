@@ -29,7 +29,8 @@ class Controller extends BaseController
     ]);
 		$xml = simplexml_load_string($response->getBody());
 		$json = json_encode($xml);
-    	return json_decode($json,TRUE);
+    return response(json_decode($json,TRUE), 200);
+    	// return json_decode($json,TRUE);
     }
 
     public function BoletoPayment(Request $request) {
