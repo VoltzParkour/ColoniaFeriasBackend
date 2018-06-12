@@ -131,6 +131,10 @@ class Controller extends BaseController
 		 * @todo Change the receiver Email
 		 */
 		$creditCard->setReceiverEmail('luisfnicolau@hotmail.com');
+		$creditCard->setHolder()->setPhone()->withParameters(
+    	21,
+    	995403334
+		);
 		// Set a reference code for this payment request. It is useful to identify this payment
 		// in future notifications.
 		$creditCard->setReference("LIBPHP000001");
