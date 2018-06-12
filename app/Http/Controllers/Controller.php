@@ -22,7 +22,8 @@ class Controller extends BaseController
     		'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/'
         // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/',
 		]);
-		$response = $client->request('POST', 'sessions?email=luisfnicolau@hotmail.com&token=B2412B7EE00043EEBC7CD0EF9042DA79', [
+		$response = $client->request('POST', 'sessions?email=gianpomposelli@gmail.com
+&token=44E5916B26804CB08B271F72DA379363', [
       'headers' => [
             'Access-Control-Allow-Origin' => '*',
         ]
@@ -49,7 +50,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "B2412B7EE00043EEBC7CD0EF9042DA79");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "44E5916B26804CB08B271F72DA379363");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
@@ -58,7 +59,7 @@ class Controller extends BaseController
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$boleto->setReceiverEmail('luisfnicolau@hotmail.com');
+		$boleto->setReceiverEmail('gianpomposelli@gmail.com');
 		// Set the currency
 		$boleto->setCurrency("BRL");
 		// Add an item for this payment request
@@ -123,14 +124,14 @@ class Controller extends BaseController
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "B2412B7EE00043EEBC7CD0EF9042DA79");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "44E5916B26804CB08B271F72DA379363");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$creditCard->setReceiverEmail('luisfnicolau@hotmail.com');
+		$creditCard->setReceiverEmail('gianpomposelli@gmail.com');
 		$creditCard->setHolder()->setPhone()->withParameters(
     	21,
     	995403334
@@ -234,7 +235,7 @@ class Controller extends BaseController
      // Base URI is used with relative requests
         'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
+    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=gianpomposelli@gmail.com&token=44E5916B26804CB08B271F72DA379363');
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
     $transactionCode = $transaction->code;
