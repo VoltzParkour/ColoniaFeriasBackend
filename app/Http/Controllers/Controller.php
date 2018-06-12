@@ -81,8 +81,8 @@ class Controller extends BaseController
 		// If you using SANDBOX you must use an email @sandbox.pagseguro.com.br
 		$boleto->setSender()->setName($request->get('name'));
 		// $boleto->setSender()->setName('abigail freitas');
-		// $boleto->setSender()->setEmail($request->get('email'));
-		$boleto->setSender()->setEmail('lusifnicolau@gmail.com.br');
+		$boleto->setSender()->setEmail($request->get('email'));
+		// $boleto->setSender()->setEmail('lusifnicolau@gmail.com.br');
 		$boleto->setSender()->setPhone()->withParameters(
 		    $request->get('phone_code'),
 		    $request->get('phone')
@@ -151,7 +151,8 @@ class Controller extends BaseController
 		// Set your customer information.
 		// If you using SANDBOX you must use an email @sandbox.pagseguro.com.br
 		$creditCard->setSender()->setName($request->get('name'));
-		$creditCard->setSender()->setEmail('fsdsdas@sandbox.pagseguro.com.br');
+		// $creditCard->setSender()->setEmail('fsdsdas@sandbox.pagseguro.com.br');
+		$creditCard->setSender()->setEmail($request->get('email'));
 		$creditCard->setSender()->setPhone()->withParameters(
 		    $request->get('phone_code'),
 		    $request->get('phone')
