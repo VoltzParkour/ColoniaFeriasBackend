@@ -228,7 +228,7 @@ class Controller extends BaseController
      // Base URI is used with relative requests
         'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->transactionCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
+    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1');
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
     $transactionCode = $transaction->code;
