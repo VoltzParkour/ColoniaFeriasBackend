@@ -262,6 +262,10 @@ class Controller extends BaseController
         break;
 
       default:
+      	$reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          $reference->remove();
       return response('Not a payment confirmation', 201);
         break;
     }
