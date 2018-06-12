@@ -19,10 +19,10 @@ class Controller extends BaseController
     public function Session(Request $request) {
     	$client = new Client([
    	 // Base URI is used with relative requests
-    		'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v2/'
+    		'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/'
         // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/',
 		]);
-		$response = $client->request('POST', 'sessions?email=luisfnicolau@hotmail.com&token=503F25BCA32146728390BA730AA376F1', [
+		$response = $client->request('POST', 'sessions?email=luisfnicolau@hotmail.com&token=B2412B7EE00043EEBC7CD0EF9042DA79', [
       'headers' => [
             'Access-Control-Allow-Origin' => '*',
         ]
