@@ -155,7 +155,7 @@ class Controller extends BaseController
 		    $request->get('cpf')
 		     // '01212944208'
 		);
-		$creditCard->setSender()->setHash($request->get('hash'));
+		// $creditCard->setSender()->setHash($request->get('hash'));
 		// $creditCard->setSender()->setIp('127.0.0.0');
 		// Set shipping information for this payment request
 		$creditCard->setShipping()->setAddressRequired()->withParameters('FALSE');
