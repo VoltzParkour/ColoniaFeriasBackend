@@ -72,6 +72,8 @@ class Controller extends BaseController
 		);
 		// Set a reference code for this payment request. It is useful to identify this payment
 		// in future notifications.
+		$boleto->setSender()->setHash($request->get('hash'));
+
 		$boleto->setReference("LIBPHP000001-boleto");
 		//set extra amount
 		$boleto->setExtraAmount(0.00);
@@ -80,7 +82,7 @@ class Controller extends BaseController
 		$boleto->setSender()->setName($request->get('name'));
 		// $boleto->setSender()->setName('abigail freitas');
 		// $boleto->setSender()->setEmail($request->get('email'));
-		$boleto->setSender()->setEmail('c45698485807864775067@sandbox.pagseguro.com.br');
+		$boleto->setSender()->setEmail('lusifnicolau@gmail.com.br');
 		$boleto->setSender()->setPhone()->withParameters(
 		    $request->get('phone_code'),
 		    $request->get('phone')
