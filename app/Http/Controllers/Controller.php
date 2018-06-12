@@ -266,12 +266,14 @@ class Controller extends BaseController
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
           ->getReference('colony_buyers_by_payment/'.$transactionCode);
           $reference->remove();
+          return response('Removed', 202);
         break;
       case 7:
       	$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
           ->getReference('colony_buyers_by_payment/'.$transactionCode);
           $reference->remove();
+          return response('Removed', 202);
       default:
       return response('Not a payment confirmation', 201);
         break;
