@@ -48,7 +48,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setEnvironment("production");
 		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "B2412B7EE00043EEBC7CD0EF9042DA79");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
@@ -120,7 +120,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		\PagSeguro\Configuration\Configure::setEnvironment("production");
 		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "B2412B7EE00043EEBC7CD0EF9042DA79");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
