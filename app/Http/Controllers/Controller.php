@@ -90,7 +90,6 @@ class Controller extends BaseController
 		    $request->get('cpf')
 		     // '01212944208'
 		);
-		$boleto->setSender()->setHash($request->get('hash'));
 		// $boleto->setSender()->setIp('127.0.0.0');
 		// Set shipping information for this payment request
 		$boleto->setShipping()->setAddressRequired()->withParameters('FALSE');
@@ -157,7 +156,7 @@ class Controller extends BaseController
 		     // '01212944208'
 		);
 		$creditCard->setSender()->setHash($request->get('hash'));
-		$creditCard->setSender()->setIp('127.0.0.0');
+		// $creditCard->setSender()->setIp('127.0.0.0');
 		// Set shipping information for this payment request
 		$creditCard->setShipping()->setAddressRequired()->withParameters('FALSE');
 
