@@ -197,15 +197,15 @@ class Controller extends BaseController
 		    $result = $creditCard->register(
 		        \PagSeguro\Configuration\Configure::getAccountCredentials()
 			);
-		    echo "<pre>";
-		    print_r($result);
+		    // echo "<pre>";
+		    // print_r($result);
         $data = [
           'transactionCode' => $result->getCode(),
         ];
 		    return $data;
 		} catch (Exception $e) {
-		    echo "</br> <strong>";
-		    die($e->getMessage());
+		    // echo "</br> <strong>";
+		    return $e->getMessage();
 		}
 	}
 
