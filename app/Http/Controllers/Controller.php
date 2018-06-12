@@ -48,7 +48,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
 		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
@@ -120,7 +120,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("sandbox");
+		// \PagSeguro\Configuration\Configure::setEnvironment("sandbox");
 		\PagSeguro\Configuration\Configure::setAccountCredentials("luisfnicolau@hotmail.com", "503F25BCA32146728390BA730AA376F1");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
@@ -155,7 +155,7 @@ class Controller extends BaseController
 		    $request->get('cpf')
 		     // '01212944208'
 		);
-		// $creditCard->setSender()->setHash($request->get('hash'));
+		$creditCard->setSender()->setHash($request->get('hash'));
 		// $creditCard->setSender()->setIp('127.0.0.0');
 		// Set shipping information for this payment request
 		$creditCard->setShipping()->setAddressRequired()->withParameters('FALSE');

@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/session', 'Controller@Session');
+Route::post('/pagseguro/notification', 'Controller@Confirmation');
 
 Route::get('/', function () {
     return view('welcome');
