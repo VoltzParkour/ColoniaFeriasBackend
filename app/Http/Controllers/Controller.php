@@ -22,8 +22,7 @@ class Controller extends BaseController
     		'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/'
         // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/',
 		]);
-		$response = $client->request('POST', 'sessions?email=gianpomposelli@gmail.com
-&token=44E5916B26804CB08B271F72DA379363', [
+		$response = $client->request('POST', 'sessions?email=gianpomposelli@gmail.com&token=89EE1C909073473692979E098163D221', [
       'headers' => [
             'Access-Control-Allow-Origin' => '*',
         ]
@@ -50,7 +49,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "44E5916B26804CB08B271F72DA379363");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "89EE1C909073473692979E098163D221");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
@@ -124,7 +123,7 @@ class Controller extends BaseController
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "44E5916B26804CB08B271F72DA379363");
+		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "89EE1C909073473692979E098163D221");
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
@@ -233,9 +232,9 @@ class Controller extends BaseController
 
     $client = new Client([
      // Base URI is used with relative requests
-        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
+        'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=gianpomposelli@gmail.com&token=44E5916B26804CB08B271F72DA379363');
+    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=gianpomposelli@gmail.com&token=89EE1C909073473692979E098163D221');
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
     $transactionCode = $transaction->code;
