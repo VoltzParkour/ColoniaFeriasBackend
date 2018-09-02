@@ -11,9 +11,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 
-$enviroment = 'sandbox';
-// $enviroment = 'production';
-
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -21,9 +18,10 @@ class Controller extends BaseController
     public function Session(Request $request) {
     	$client = new Client([
    	 // Base URI is used with relative requests
-    		'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/'
+        'base_uri' => $this->baseUriWithEnviroment()
+
 		]);
-		$response = $client->request('POST', 'sessions?email='.$this->getEmailWithEnviroment.'&token='.$this->getTokenWithEnviroment, [
+		$response = $client->request('POST', 'sessions?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment(), [
       'headers' => [
             'Access-Control-Allow-Origin' => '*',
         ]
@@ -35,17 +33,29 @@ class Controller extends BaseController
     }
 
     public function getEmailWithEnviroment() {
-      if ($enviroment == 'sandbox') {
+      if ($this->enviroment() == 'sandbox') {
         return 'luisfnicolau@hotmail.com';
       }
       return 'gianpomposelli@gmail.com';
     }
 
     public function getTokenWithEnviroment() {
-      if ($enviroment == 'sandbox') {
+      if ($this->enviroment() == 'sandbox') {
         return '503F25BCA32146728390BA730AA376F1';
       }
       return '89EE1C909073473692979E098163D221';
+    }
+
+    public function baseUriWithEnviroment() {
+      if ($this->enviroment() == 'sandbox') {
+        return 'https://ws.sandbox.pagseguro.uol.com.br/v2/';
+      }
+      return 'https://ws.pagseguro.uol.com.br/v2/';
+    }
+
+    public function enviroment() {
+      return $enviroment = 'sandbox';
+      // return $enviroment = 'production';
     }
 
     public function BoletoPayment(Request $request) {
@@ -80,7 +90,7 @@ class Controller extends BaseController
 		// Add an item for this payment request
 		$boleto->addItems()->withParameters(
 		    '1',
-		    'Colonia Ferias',
+        $request->description ? $request->description : 'Colonia Ferias',
 		    1,
 		    $request->get('amount')
 		    // 110.00
@@ -137,15 +147,15 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment($enviroment);
-		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment, $this->getTokenWithEnviroment);
+		\PagSeguro\Configuration\Configure::setEnvironment($this->enviroment());
+		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment(), $this->getTokenWithEnviroment());
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$creditCard->setReceiverEmail($this->getEmailWithEnviroment);
+		$creditCard->setReceiverEmail($this->getEmailWithEnviroment());
 		$creditCard->setHolder()->setPhone()->withParameters(
     	21,
     	995403334
@@ -158,7 +168,7 @@ class Controller extends BaseController
 		// Add an item for this payment request
 		$creditCard->addItems()->withParameters(
 		    '1',
-		    'Colonia Ferias',
+        $request->description ? $request->description : 'Colonia Ferias',
 		    1,
 		    $request->get('amount')
 		    // 110.00
@@ -247,18 +257,23 @@ class Controller extends BaseController
 
     $client = new Client([
      // Base URI is used with relative requests
-        'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
+        // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
+        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment.'&token='.$this->getTokenWithEnviroment);
+    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment());
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
+    return $response->getBody();
     $transactionCode = $transaction->code;
     $transactionStatus = $transaction->status;
+    $transactionDescription = $transaction->items->item->description;
+    // return $transactionDescription;
+    if ($transactionDescription == 'Colonia Ferias') {
     switch ($transactionStatus) {
       case 3:
         $reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('test_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.$transactionCode);
         // $snapshot = $reference->getSnapshot();
           // ->push([
           //     'title' => 'Post title',
@@ -273,7 +288,7 @@ class Controller extends BaseController
               $user = $reference->getChild($coloniesIds[$i]);
               $userIds = array_keys($user->getValue());
               for ($j=0; $j < sizeof($userIds); $j++) {
-                $database->getReference('test/'.$coloniesIds[$i].'/'.$userIds[$j])
+                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
                 // return $user->getChild($userIds[$j])->getValue();
                 ->set($user->getChild($userIds[$j])->getValue());
               }
@@ -285,20 +300,56 @@ class Controller extends BaseController
       case 6:
 		$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('test_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.$transactionCode);
           $reference->remove();
           return response('Removed', 202);
         break;
       case 7:
       	$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('test_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.$transactionCode);
           $reference->remove();
           return response('Removed', 202);
       default:
       return response('Not a payment confirmation', 201);
         break;
     }
-  }
+  } else if ($transactionDescription == 'Desafio Voltz Challenge') {
+    switch ($transactionStatus) {
+      case 3:
+        $reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('events/challenge'.$transactionCode);
+        // $snapshot = $reference->getSnapshot();
+          // ->push([
+          //     'title' => 'Post title',
+          //     'body' => 'This should probably be longer.'
+          // ]);
+          // return $reference->getValue();
+          if (!$reference->getValue()) {
+            return response('Not found', 201);
+          }
+          $reference->set('paga');
+          return response('Added', 200);
+        break;
 
+      case 6:
+		$reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('events/challenge'.$transactionCode).'/transaction_status';
+          $reference->set('devolvida');
+          return response('Removed', 202);
+        break;
+      case 7:
+      	$reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('colony_buyers_by_payment/'.$transactionCode.'/transaction_status');
+          $reference->set('cancelada');
+          return response('Removed', 202);
+      default:
+      return response('Not a payment confirmation', 201);
+        break;
+    }
+  }
+}
 }
