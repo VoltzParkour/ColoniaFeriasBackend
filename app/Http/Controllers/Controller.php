@@ -263,7 +263,6 @@ class Controller extends BaseController
     $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment());
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
-    return $response->getBody();
     $transactionCode = $transaction->code;
     $transactionStatus = $transaction->status;
     $transactionDescription = $transaction->items->item->description;
@@ -314,12 +313,12 @@ class Controller extends BaseController
       return response('Not a payment confirmation', 201);
         break;
     }
-  } else if ($transactionDescription == 'Desafio Voltz Challenge') {
+  } else if ($transactionDescription == 'Voltz Kids') {
     switch ($transactionStatus) {
       case 3:
         $reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('events/challenge'.$transactionCode);
+          ->getReference('events/kids'.$transactionCode);
         // $snapshot = $reference->getSnapshot();
           // ->push([
           //     'title' => 'Post title',
@@ -336,14 +335,14 @@ class Controller extends BaseController
       case 6:
 		$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('events/challenge'.$transactionCode).'/transaction_status';
+          ->getReference('events/kids'.$transactionCode).'/transaction_status';
           $reference->set('devolvida');
           return response('Removed', 202);
         break;
       case 7:
       	$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('colony_buyers_by_payment/'.$transactionCode.'/transaction_status');
+          ->getReference('events/kids'.$transactionCode.'/transaction_status');
           $reference->set('cancelada');
           return response('Removed', 202);
       default:
