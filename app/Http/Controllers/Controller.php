@@ -11,6 +11,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 
+$enviroment = 'sandbox';
+// $enviroment = 'production';
 
 class Controller extends BaseController
 {
@@ -20,9 +22,8 @@ class Controller extends BaseController
     	$client = new Client([
    	 // Base URI is used with relative requests
     		'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/'
-        // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v2/',
 		]);
-		$response = $client->request('POST', 'sessions?email=gianpomposelli@gmail.com&token=89EE1C909073473692979E098163D221', [
+		$response = $client->request('POST', 'sessions?email='.$this->getEmailWithEnviroment.'&token='.$this->getTokenWithEnviroment, [
       'headers' => [
             'Access-Control-Allow-Origin' => '*',
         ]
@@ -31,6 +32,20 @@ class Controller extends BaseController
 		$json = json_encode($xml);
     return response(json_decode($json,TRUE), 200);
     	// return json_decode($json,TRUE);
+    }
+
+    public function getEmailWithEnviroment() {
+      if ($enviroment == 'sandbox') {
+        return 'luisfnicolau@hotmail.com';
+      }
+      return 'gianpomposelli@gmail.com';
+    }
+
+    public function getTokenWithEnviroment() {
+      if ($enviroment == 'sandbox') {
+        return '503F25BCA32146728390BA730AA376F1';
+      }
+      return '89EE1C909073473692979E098163D221';
     }
 
     public function BoletoPayment(Request $request) {
@@ -48,8 +63,8 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "89EE1C909073473692979E098163D221");
+		\PagSeguro\Configuration\Configure::setEnvironment($enviroment);
+		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment, $this->getTokenWithEnviroment);
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
@@ -58,7 +73,7 @@ class Controller extends BaseController
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$boleto->setReceiverEmail('gianpomposelli@gmail.com');
+		$boleto->setReceiverEmail($this->getEmailWithEnviroment);
 		// Set the currency
 		$boleto->setCurrency("BRL");
 		// Add an item for this payment request
@@ -122,15 +137,15 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment("production");
-		\PagSeguro\Configuration\Configure::setAccountCredentials("gianpomposelli@gmail.com", "89EE1C909073473692979E098163D221");
+		\PagSeguro\Configuration\Configure::setEnvironment($enviroment);
+		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment, $this->getTokenWithEnviroment);
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new direct payment request, using Credit Card
 		$creditCard = new \PagSeguro\Domains\Requests\DirectPayment\CreditCard();
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$creditCard->setReceiverEmail('gianpomposelli@gmail.com');
+		$creditCard->setReceiverEmail($this->getEmailWithEnviroment);
 		$creditCard->setHolder()->setPhone()->withParameters(
     	21,
     	995403334
@@ -234,7 +249,7 @@ class Controller extends BaseController
      // Base URI is used with relative requests
         'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
     ]);
-    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email=gianpomposelli@gmail.com&token=89EE1C909073473692979E098163D221');
+    $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment.'&token='.$this->getTokenWithEnviroment);
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
     $transactionCode = $transaction->code;
@@ -243,7 +258,7 @@ class Controller extends BaseController
       case 3:
         $reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('test_by_payment/'.$transactionCode);
         // $snapshot = $reference->getSnapshot();
           // ->push([
           //     'title' => 'Post title',
@@ -258,7 +273,7 @@ class Controller extends BaseController
               $user = $reference->getChild($coloniesIds[$i]);
               $userIds = array_keys($user->getValue());
               for ($j=0; $j < sizeof($userIds); $j++) {
-                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
+                $database->getReference('test/'.$coloniesIds[$i].'/'.$userIds[$j])
                 // return $user->getChild($userIds[$j])->getValue();
                 ->set($user->getChild($userIds[$j])->getValue());
               }
@@ -270,14 +285,14 @@ class Controller extends BaseController
       case 6:
 		$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('test_by_payment/'.$transactionCode);
           $reference->remove();
           return response('Removed', 202);
         break;
       case 7:
       	$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('test_by_payment/'.$transactionCode);
           $reference->remove();
           return response('Removed', 202);
       default:
