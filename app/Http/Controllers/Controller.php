@@ -313,7 +313,7 @@ class Controller extends BaseController
       return response('Not a payment confirmation', 201);
         break;
     }
-  } else if ($transactionDescription == 'Voltz Kids') {
+  } else if ($transactionDescription == 'Desafio Voltz Kids 2018') {
     switch ($transactionStatus) {
       case 3:
 
