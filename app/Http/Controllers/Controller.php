@@ -54,8 +54,8 @@ class Controller extends BaseController
     }
 
     public function enviroment() {
-      return $enviroment = 'sandbox';
-      // return $enviroment = 'production';
+      // return $enviroment = 'sandbox';
+      return $enviroment = 'production';
     }
 
     public function BoletoPayment(Request $request) {
@@ -257,8 +257,8 @@ class Controller extends BaseController
 
     $client = new Client([
      // Base URI is used with relative requests
-        // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
-        'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
+        'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
+        // 'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
     ]);
     $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment());
     // return $response->getBody();
