@@ -15,6 +15,11 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function enviroment() {
+      // return $enviroment = 'sandbox';
+      return $enviroment = 'production';
+    }
+
     public function Session(Request $request) {
     	$client = new Client([
    	 // Base URI is used with relative requests
@@ -51,11 +56,6 @@ class Controller extends BaseController
         return 'https://ws.sandbox.pagseguro.uol.com.br/v2/';
       }
       return 'https://ws.pagseguro.uol.com.br/v2/';
-    }
-
-    public function enviroment() {
-      // return $enviroment = 'sandbox';
-      return $enviroment = 'production';
     }
 
     public function BoletoPayment(Request $request) {
@@ -255,10 +255,17 @@ class Controller extends BaseController
 
     $database = $firebase->getDatabase();
 
+    $uri = '';
+    if ($this->enviroment() == 'sandbox') {
+      $uri = 'https://ws.sandbox.pagseguro.uol.com.br/v3/';
+    } else {
+      $uri = 'https://ws.pagseguro.uol.com.br/v3/';
+    }
+
     $client = new Client([
      // Base URI is used with relative requests
-        'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
-        // 'base_uri' => 'https://ws.sandbox.pagseguro.uol.com.br/v3/',
+        // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
+        'base_uri' => $uri,
     ]);
     $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment());
     // return $response->getBody();
@@ -344,6 +351,43 @@ class Controller extends BaseController
       	$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
           ->getReference('events/kids/'.$transactionCode.'/transaction_status');
+          $reference->set('cancelada');
+          return response('Removed', 202);
+      default:
+      return response('Not a payment confirmation', 201);
+        break;
+    }
+  } else if ($transactionDescription == 'Oficina Voltz Kids 2018') {
+    switch ($transactionStatus) {
+      case 3:
+
+        $reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('events/oficina/'.$transactionCode.'/transaction_status');
+        // $snapshot = $reference->getSnapshot();
+          // ->push([
+          //     'title' => 'Post title',
+          //     'body' => 'This should probably be longer.'
+          // ]);
+          // return $reference->getValue();
+          if (!$reference->getValue()) {
+            return response('Not found', 201);
+          }
+          $reference->set('paga');
+          return response('Added', 200);
+        break;
+
+      case 6:
+		$reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('events/oficina/'.$transactionCode).'/transaction_status';
+          $reference->set('devolvida');
+          return response('Removed', 202);
+        break;
+      case 7:
+      	$reference = $database
+          // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+          ->getReference('events/oficina/'.$transactionCode.'/transaction_status');
           $reference->set('cancelada');
           return response('Removed', 202);
       default:
