@@ -343,7 +343,7 @@ class Controller extends BaseController
       case 6:
 		$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('events/kids/'.$transactionCode).'/transaction_status';
+          ->getReference('events/kids/'.$transactionCode.'/transaction_status');
           $reference->set('devolvida');
           return response('Removed', 202);
         break;
@@ -380,7 +380,7 @@ class Controller extends BaseController
       case 6:
 		$reference = $database
           // ->getReference('colony_buyers_by_payment/'.$transactionCode);
-          ->getReference('events/oficina/'.$transactionCode).'/transaction_status';
+          ->getReference('events/oficina/'.$transactionCode.'/transaction_status');
           $reference->set('devolvida');
           return response('Removed', 202);
         break;
