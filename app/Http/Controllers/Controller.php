@@ -73,8 +73,8 @@ class Controller extends BaseController
 		\PagSeguro\Library::initialize();
 		\PagSeguro\Library::cmsVersion()->setName("Nome")->setRelease("1.0.0");
 		\PagSeguro\Library::moduleVersion()->setName("Nome")->setRelease("1.0.0");
-		\PagSeguro\Configuration\Configure::setEnvironment($enviroment);
-		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment, $this->getTokenWithEnviroment);
+		\PagSeguro\Configuration\Configure::setEnvironment($this->enviroment());
+		\PagSeguro\Configuration\Configure::setAccountCredentials($this->getEmailWithEnviroment(), $this->getTokenWithEnviroment());
 		\PagSeguro\Configuration\Configure::setCharset('UTF-8');
 		//Instantiate a new Boleto Object
 		$boleto = new \PagSeguro\Domains\Requests\DirectPayment\Boleto();
@@ -83,7 +83,7 @@ class Controller extends BaseController
 		/**
 		 * @todo Change the receiver Email
 		 */
-		$boleto->setReceiverEmail($this->getEmailWithEnviroment);
+		$boleto->setReceiverEmail($this->getEmailWithEnviroment());
 		// Set the currency
 		$boleto->setCurrency("BRL");
 		// Add an item for this payment request
