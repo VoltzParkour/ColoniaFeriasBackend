@@ -16,6 +16,8 @@ Route::get('/session', 'Controller@Session');
 Route::post('/payment/boleto', 'Controller@BoletoPayment');
 Route::post('/payment/card', 'Controller@CardPayment');
 Route::post('/pagseguro/notification', 'Controller@Confirmation');
+Route::post('/pagseguro/confirm', 'Controller@Confirm');
+Route::post('/pagseguro/check', 'Controller@Check');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

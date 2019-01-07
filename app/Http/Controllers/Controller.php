@@ -241,8 +241,82 @@ class Controller extends BaseController
 		}
 	}
 
-  public function Confirmation(Request $request) {
+	public function Check(Request $request) {
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/coloniaferiasvoltz-firebase-adminsdk-qgbr2-a62e750848.json');
 
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            // The following line is optional if the project id in your credentials file
+            // is identical to the subdomain of your Firebase project. If you need it,
+            // make sure to replace the URL with the URL of your project.
+            ->withDatabaseUri('https://coloniaferiasvoltz.firebaseio.com')
+            ->create();
+        $database = $firebase->getDatabase();
+        $reference = $database
+            // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+            ->getReference('colony_buyers/');
+        $values = $reference->getValue();
+
+        $array = [];
+        foreach ($values as $key => $value) {
+            if ($key == '-LEgM90slRNpURqOZ9e3') {
+                continue;
+            }
+            foreach ($value as $middleKey => $middleValue) {
+                foreach ($middleValue as $finalKey => $finalValue) {
+                    $database->getReference('colony_buyers/-LQdwFFfKio_UTfCuxUo/' . $finalKey)
+                        // return $user->getChild($userIds[$j])->getValue();
+                        ->set($finalValue);
+                }
+            }
+//            array_push($array, $value);
+        }
+
+
+//        $database->getReference('colony_buyers/-LQdwFFfKio_UTfCuxUo')
+//            // return $user->getChild($userIds[$j])->getValue();
+//            ->set($array);
+        return 'Sucesso';
+    }
+
+	public function Confirm(Request $request) {
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/coloniaferiasvoltz-firebase-adminsdk-qgbr2-a62e750848.json');
+
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            // The following line is optional if the project id in your credentials file
+            // is identical to the subdomain of your Firebase project. If you need it,
+            // make sure to replace the URL with the URL of your project.
+            ->withDatabaseUri('https://coloniaferiasvoltz.firebaseio.com')
+            ->create();
+        $database = $firebase->getDatabase();
+        $reference = $database
+            // ->getReference('colony_buyers_by_payment/'.$transactionCode);
+            ->getReference('colony_buyers_by_payment/'.$request->transactionCode);
+        // $snapshot = $reference->getSnapshot();
+        // ->push([
+        //     'title' => 'Post title',
+        //     'body' => 'This should probably be longer.'
+        // ]);
+        // return $reference->getValue();
+        if (!$reference->getValue()) {
+            return response('Not found', 201);
+        }
+        $coloniesIds = array_keys($reference->getValue());
+        for ($i=0; $i < sizeof($coloniesIds); $i++) {
+            $user = $reference->getChild($coloniesIds[$i]);
+            $userIds = array_keys($user->getValue());
+            for ($j=0; $j < sizeof($userIds); $j++) {
+                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
+                    // return $user->getChild($userIds[$j])->getValue();
+                    ->set($user->getChild($userIds[$j])->getValue());
+            }
+        }
+        $reference->remove();
+        return response('Added', 200);
+    }
+
+  public function Confirmation(Request $request) {
     $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/coloniaferiasvoltz-firebase-adminsdk-qgbr2-a62e750848.json');
 
     $firebase = (new Factory)
@@ -299,7 +373,7 @@ class Controller extends BaseController
                 ->set($user->getChild($userIds[$j])->getValue());
               }
           }
-          $reference->remove();
+//          $reference->remove();
           return response('Added', 200);
         break;
 
