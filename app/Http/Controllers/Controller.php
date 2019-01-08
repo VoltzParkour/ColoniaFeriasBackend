@@ -353,6 +353,9 @@ class Controller extends BaseController
         // 'base_uri' => 'https://ws.pagseguro.uol.com.br/v3/',
         'base_uri' => $uri,
     ]);
+    if (!$request->notificationCode) {
+        return 'Sem código de notificacao';
+    }
     $response = $client->request('GET', 'transactions/notifications/'.$request->notificationCode.'?email='.$this->getEmailWithEnviroment().'&token='.$this->getTokenWithEnviroment());
     // return $response->getBody();
     $transaction = simplexml_load_string($response->getBody());
