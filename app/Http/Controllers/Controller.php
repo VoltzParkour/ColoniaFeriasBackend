@@ -302,18 +302,30 @@ class Controller extends BaseController
         if (!$reference->getValue()) {
             return response('Not found', 201);
         }
-        $coloniesIds = array_keys($reference->getValue());
-        for ($i=0; $i < sizeof($coloniesIds); $i++) {
-            $user = $reference->getChild($coloniesIds[$i]);
-            $userIds = array_keys($user->getValue());
-            for ($j=0; $j < sizeof($userIds); $j++) {
-                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
-                    // return $user->getChild($userIds[$j])->getValue();
-                    ->set($user->getChild($userIds[$j])->getValue());
+        $coloniesIds = $reference->getValue();
+        foreach ($coloniesIds as $colony) {
+            foreach ($colony as $colonyKey => $subscription) {
+                foreach ($subscription as $key => $users) {
+                    $database->getReference('colony_buyers/'.$colonyKey.'/'.$key)
+                        // return $user->getChild($userIds[$j])->getValue();
+                        ->set($users);                }
             }
         }
-        $reference->remove();
+//        for ($i=0; $i < sizeof($coloniesIds); $i++) {
+//            $user = $reference->getChild($coloniesIds[$i]);
+//            $userIds = array_keys($user->getValue());
+//            for ($j=0; $j < sizeof($userIds); $j++) {
+//                $database->getReference('colony_buyers/'.$coloniesIds[$i].'/'.$userIds[$j])
+//                    // return $user->getChild($userIds[$j])->getValue();
+//                    ->set($user->getChild($userIds[$j])->getValue());
+//            }
+//        }
+//        $reference->remove();
         return response('Added', 200);
+    }
+
+    public function Test(Request $request) {
+        return 'Teste Ok';
     }
 
   public function Confirmation(Request $request) {
