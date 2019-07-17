@@ -16,8 +16,8 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     public function enviroment() {
-       return $enviroment = 'sandbox';
-//      return $enviroment = 'production';
+//       return $enviroment = 'sandbox';
+      return $enviroment = 'production';
     }
 
     public function Session(Request $request) {
